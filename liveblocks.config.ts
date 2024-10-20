@@ -7,6 +7,10 @@ const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!
 })
 
+const { RoomProvider, useMyPresence, useOthers, useMutation } = createRoomContext<Liveblocks>({
+  client,
+});
+
 declare global {
   interface Liveblocks {
     // Each user's Presence, for useMyPresence, useOthers, etc.
