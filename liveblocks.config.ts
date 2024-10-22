@@ -1,60 +1,55 @@
-// Define Liveblocks types for your application
-// https://liveblocks.io/docs/api-reference/liveblocks-react#Typing-your-data
 import { createClient } from "@liveblocks/client";
 import { createRoomContext } from "@liveblocks/react";
 
+// Initialize the Liveblocks client with the public API key
 const client = createClient({
-  publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!
-})
+  publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!, // Use the key from environment variables
+});
 
-const { RoomProvider, useMyPresence, useOthers, useMutation } = createRoomContext<Liveblocks>({
+// Define the Liveblocks types in a more specific way
+interface MyLiveblocks {
+  // Define the presence data structure 
+  
+  Presence: {
+    cursor?: { x: number; y: number }; // Example: cursor coordinates
+  };
+
+  // Define the storage structure
+  Storage: {
+    animals?: LiveList<string>; // Example: a list of animals
+  };
+
+  // Define custom user metadata
+  UserMeta: {
+    id: string; // User ID
+    info: {
+      name?: string; // Example: user's name
+      avatar?: string; // Example: user's avatar
+    };
+  };
+
+  // Define custom events
+  RoomEvent: 
+    | { type: "PLAY" } 
+    | { type: "REACTION"; emoji: string }; // Example events with union types
+
+  // Define thread metadata structure
+  ThreadMetadata: {
+    x?: number; // X-coordinate
+    y?: number; // Y-coordinate
+  };
+
+  // Define room info structure
+  RoomInfo: {
+    title?: string; // Room title
+    url?: string;   // Room URL
+  };
+}
+
+// Create the room context using the specific types for Liveblocks
+const { RoomProvider, useMyPresence, useOthers, useMutation } = createRoomContext<MyLiveblocks>({
   client,
 });
 
-declare global {
-  interface Liveblocks {
-    // Each user's Presence, for useMyPresence, useOthers, etc.
-    Presence: {
-      // Example, real-time cursor coordinates
-      // cursor: { x: number; y: number };
-    };
-
-    // The Storage tree for the room, for useMutation, useStorage, etc.
-    Storage: {
-      // Example, a conflict-free list
-      // animals: LiveList<string>;
-    };
-
-    // Custom user info set when authenticating with a secret key
-    UserMeta: {
-      id: string;
-      info: {
-        // Example properties, for useSelf, useUser, useOthers, etc.
-        // name: string;
-        // avatar: string;
-      };
-    };
-
-    // Custom events, for useBroadcastEvent, useEventListener
-    RoomEvent: {};
-      // Example has two events, using a union
-      // | { type: "PLAY" } 
-      // | { type: "REACTION"; emoji: "🔥" };
-
-    // Custom metadata set on threads, for useThreads, useCreateThread, etc.
-    ThreadMetadata: {
-      // Example, attaching coordinates to a thread
-      // x: number;
-      // y: number;
-    };
-
-    // Custom room info set with resolveRoomsInfo, for useRoomInfo
-    RoomInfo: {
-      // Example, rooms with a title and url
-      // title: string;
-      // url: string;
-    };
-  }
-}
-
-export {};
+// Export the necessary components
+export { RoomProvider, useMyPresence, useOthers, useMutation };
